@@ -96,9 +96,6 @@ ethereal/
 - ESLint and TypeScript strict mode enabled
 - Tailwind and tw-animate-css for styling and animation
 
-## 📄 License
-MIT (or specify your license)
-
 ---
 
 > Inspired by modern UI/UX and built for rapid prototyping or production-ready apps.
