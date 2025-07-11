@@ -24,7 +24,7 @@ const Hero = () => {
             animate={fadeInLeft.animate}
             transition={{ duration: 0.8, ease: [0.42, 0, 0.58, 1] }}
           >
-            <div className="space-y-4">
+            <div className="space-y-4 font-sans">
               <motion.h1
                 className="text-4xl sm:text-5xl lg:text-6xl font-light text-slate-800 leading-tight"
                 initial={{ opacity: 0, y: 40 }}

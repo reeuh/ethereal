@@ -18,3 +18,5 @@ export interface FooterSection {
   title: string
   links: string[]
 }
+
+export type { CartItem, CartState, CartAction } from "./cart"
