@@ -72,15 +72,6 @@ const initialState: CartState = {
       color: "Lavender",
       quantity: 1,
     },
-    {
-      id: 3,
-      name: "Casual Chic",
-      price: 149,
-      image: "/image/cart3.jpg",
-      size: "S",
-      color: "Lavender",
-      quantity: 1,
-    },
   ],
 }
 

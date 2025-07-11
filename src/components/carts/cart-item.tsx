@@ -1,6 +1,5 @@
-
 import { motion } from "framer-motion"
-import type {Variants} from "framer-motion"
+import type { Variants } from "framer-motion"
 import { Minus, Plus, Trash2 } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { useCart } from "../../context/cart-context"
@@ -44,7 +43,7 @@ export default function CartItem({ item }: CartItemProps) {
   return (
     <motion.div
       variants={itemVariants}
-      className="flex gap-4 p-4 bg-gradient-to-r from-rose-50/50 to-lavender-50/50 rounded-2xl border border-slate-100"
+      className="flex gap-4 p-4 sm:p-2 bg-gradient-to-r from-rose-50/50 to-lavender-50/50 rounded-2xl border border-slate-100"
       whileHover={{ scale: 1.02 }}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
     >
@@ -101,8 +100,8 @@ export default function CartItem({ item }: CartItemProps) {
             </motion.div>
           </div>
 
-          {/* Price and Remove */}
-          <div className="flex items-center gap-3">
+          {/* Price and Remove - Responsive */}
+          <div className="flex flex-col items-end gap-2 min-w-[60px] ml-2 md:flex-row md:items-center md:gap-3 md:text-clip">
             <motion.span
               className="font-medium text-slate-800"
               key={item.quantity * item.price}
@@ -119,6 +118,7 @@ export default function CartItem({ item }: CartItemProps) {
                 size="sm"
                 onClick={handleRemoveItem}
                 className="h-8 w-8 p-0 text-slate-400 hover:text-red-500 hover:bg-red-50"
+                aria-label="Remove item"
               >
                 <Trash2 className="h-3 w-3" />
               </Button>
@@ -126,6 +126,6 @@ export default function CartItem({ item }: CartItemProps) {
           </div>
         </div>
       </div>
-    </motion.div >
+    </motion.div>
   )
 }

@@ -101,7 +101,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
             ) : (
               <>
                 {/* Cart Items */}
-                <ScrollArea className="flex-1 px-6">
+                <ScrollArea className="flex-1 px-4 sm:px-6">
                   <motion.div className="py-4 space-y-4" variants={itemsVariants} initial="hidden" animate="visible">
                     {items.map((item, index) => (
                       <CartItem key={item.id} item={item} index={index} />
@@ -110,7 +110,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                 </ScrollArea>
 
                 {/* Footer */}
-                <div className="border-t border-slate-100 p-6 space-y-4">
+                <div className="border-t border-slate-100 p-4 sm:p-6 space-y-4">
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm text-slate-600">
                       <span>Subtotal ({totalItems} items)</span>
