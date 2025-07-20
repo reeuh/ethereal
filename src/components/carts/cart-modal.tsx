@@ -49,7 +49,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md w-full max-h-[90vh] p-0 gap-0 bg-white border-0 shadow-2xl">
+      <DialogContent className="sm:max-w-md w-full max-h-[90vh] p-0 gap-0 bg-white border-0 shadow-2xl justify-center">
         <motion.div
           variants={modalVariants}
           initial="hidden"

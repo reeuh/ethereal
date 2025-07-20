@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useReducer, type ReactNode } from "react"
 import type { CartState, CartAction } from "../types/cart"
 
@@ -56,18 +55,18 @@ const initialState: CartState = {
     // Sample cart items for demonstration
     {
       id: 1,
-      name: "Summer Elegance Dress",
-      price: 89,
-      image: "/image/cart1.jpg",
+      name: "Ethereal Summer Breeze",
+      price: 89.99,
+      image: "/placeholder.svg?height=100&width=100",
       size: "M",
       color: "Rose Pink",
       quantity: 2,
     },
     {
       id: 2,
-      name: "Evening Grace Gown",
-      price: 149,
-      image: "/image/cart2.jpg",
+      name: "Midnight Elegance Gown",
+      price: 149.99,
+      image: "/placeholder.svg?height=100&width=100",
       size: "S",
       color: "Lavender",
       quantity: 1,

@@ -15,7 +15,7 @@ const fadeInLeft = {
   }
 const Hero = () => {
   return (
-    <section className="relative px-4 py-16 sm:px-6 lg:px-8">
+    <section className="justify-center relative px-4 py-16 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div

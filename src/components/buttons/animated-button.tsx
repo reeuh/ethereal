@@ -6,7 +6,8 @@ interface AnimatedButtonProps {
   children: ReactNode
   variant?: "default" | "outline" | "ghost"
   className?: string
-  onClick?: () => void
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
+  disabled?: boolean
 }
 
 export default function AnimatedButton({
