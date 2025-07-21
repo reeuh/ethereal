@@ -1,12 +1,13 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
-import type { Transition } from "framer-motion"
-import { Star, Heart, ShoppingBag, Truck, Shield, RotateCcw } from "lucide-react"
+import { Star, Heart, ShoppingBag, Truck, Shield, RotateCcw, CreditCard } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 import { Dialog, DialogContent } from "../../components/ui/dialog"
 import { Badge } from "../../components/ui/badge"
 import { Separator } from "../../components/ui/separator"
 import AnimatedButton from "../../components/buttons/animated-button"
 import { useCart } from "../../context/cart-context"
+import { useCheckout } from "../../context/checkout-context"
 import type { Dress } from "../../types/dress"
 
 interface DressDetailModalProps {
@@ -21,22 +22,11 @@ export default function DressDetailModal({ dress, isOpen, onClose }: DressDetail
   const [quantity, setQuantity] = useState(1)
   const [isWishlisted, setIsWishlisted] = useState(false)
   const { dispatch } = useCart()
+  const { setDirectCheckoutItem } = useCheckout()
+  const navigate = useNavigate()
 
   const handleAddToCart = () => {
-    dispatch({
-      type: "ADD_ITEM",
-      payload: {
-        id: dress.id,
-        name: dress.name,
-        price: dress.price,
-        image: dress.image,
-        size: selectedSize,
-        color: selectedColor,
-      },
-    })
-
-    // Add multiple quantities if needed
-    for (let i = 1; i < quantity; i++) {
+    for (let i = 0; i < quantity; i++) {
       dispatch({
         type: "ADD_ITEM",
         payload: {
@@ -49,13 +39,33 @@ export default function DressDetailModal({ dress, isOpen, onClose }: DressDetail
         },
       })
     }
-
     onClose()
+  }
+
+  const handleDirectCheckout = () => {
+    const checkoutItem = {
+      id: dress.id,
+      name: dress.name,
+      price: dress.price,
+      image: dress.image,
+      size: selectedSize,
+      color: selectedColor,
+      quantity: quantity,
+    }
+
+    // Set the item for direct checkout
+    setDirectCheckoutItem(checkoutItem)
+    onClose()
+
+    // Navigate to checkout with direct purchase flag
+    navigate("/checkout?direct=true")
   }
 
   const discountPercentage = dress.originalPrice
     ? Math.round(((dress.originalPrice - dress.price) / dress.originalPrice) * 100)
     : 0
+
+  const totalPrice = dress.price * quantity
 
   const modalVariants = {
     hidden: { opacity: 0, scale: 0.95 },
@@ -63,15 +73,15 @@ export default function DressDetailModal({ dress, isOpen, onClose }: DressDetail
       opacity: 1,
       scale: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 300,
         damping: 30,
-      } as const,
+      },
     },
     exit: {
       opacity: 0,
       scale: 0.95,
-      transition: { duration: 0.2 } as Transition,
+      transition: { duration: 0.2 },
     },
   }
 
@@ -82,7 +92,7 @@ export default function DressDetailModal({ dress, isOpen, onClose }: DressDetail
           variants={modalVariants}
           initial="hidden"
           animate="visible"
-          exit="exit" 
+          exit="exit"
           className="grid md:grid-cols-2 h-full"
         >
           {/* Image Section */}
@@ -90,7 +100,8 @@ export default function DressDetailModal({ dress, isOpen, onClose }: DressDetail
             <img
               src={dress.image || "/placeholder.svg"}
               alt={dress.name}
-              className="object-cover w-100 h-75"
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
 
             {/* Badges */}
@@ -220,28 +231,60 @@ export default function DressDetailModal({ dress, isOpen, onClose }: DressDetail
                 </div>
               </div>
 
+              {/* Total Price Display */}
+              {quantity > 1 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-rose-50 p-4 rounded-lg"
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-600">Total ({quantity} items):</span>
+                    <span className="text-xl font-medium text-slate-800">${totalPrice.toFixed(2)}</span>
+                  </div>
+                </motion.div>
+              )}
+
               <Separator />
 
               {/* Action Buttons */}
               <div className="space-y-3">
-                <div className="flex gap-3">
+                {/* Primary Actions */}
+                <div className="grid grid-cols-2 gap-3">
                   <AnimatedButton
                     onClick={handleAddToCart}
                     disabled={!dress.inStock}
-                    className="flex-1 bg-rose-300 hover:bg-rose-400 text-white border-0 py-3"
+                    variant="outline"
+                    className="border-rose-300 text-rose-600 hover:bg-rose-50 py-3 md:py-2 md:text-sm"
                   >
-                    <ShoppingBag className="h-4 w-4 mr-2" />
-                    {dress.inStock ? "Add to Cart" : "Out of Stock"}
+                    <ShoppingBag className="h-4 w-4  md:h-2 md:w-2 mr-2" />
+                    Add to Cart
                   </AnimatedButton>
 
                   <motion.button
                     onClick={() => setIsWishlisted(!isWishlisted)}
-                    className="p-3 border border-slate-200 rounded-lg hover:bg-slate-50"
+                    className="p-3 md:p-1 border border-slate-200 rounded-lg hover:bg-slate-50 flex items-center justify-center"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <Heart className={`h-4 w-4 ${isWishlisted ? "fill-rose-400 text-rose-400" : "text-slate-600"}`} />
+                    <Heart className={`h-4 w-4 md:h-3 md:w-3 ${isWishlisted ? "fill-rose-400 text-rose-400" : "text-slate-600"}`} />
                   </motion.button>
+                </div>
+
+                {/* Direct Checkout Button */}
+                <AnimatedButton
+                  onClick={handleDirectCheckout}
+                  disabled={!dress.inStock}
+                  className="w-full bg-gradient-to-r from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600 text-white border-0 py-4 text-lg font-medium shadow-lg"
+                >
+                  <CreditCard className="h-5 w-5 mr-2" />
+                  {dress.inStock ? "Proceed to Checkout" : "Out of Stock"}
+                </AnimatedButton>
+
+                {/* Security Notice */}
+                <div className="flex items-center justify-center gap-2 text-xs text-slate-500 bg-green-50 p-2 rounded-lg">
+                  <Shield className="h-3 w-3 text-green-600" />
+                  <span>Secure checkout with SSL encryption</span>
                 </div>
               </div>
 

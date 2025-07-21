@@ -1,5 +1,3 @@
-'use client'
-
 import { motion } from "framer-motion"
 import { ShoppingBag } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog"

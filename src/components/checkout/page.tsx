@@ -1,7 +1,7 @@
 import { Suspense } from "react"
-import CheckoutFlow from "../components/checkout/checkout-flow"
-import { CartProvider } from "../context/cart-context"
-import { CheckoutProvider } from "../context/checkout-context"
+import CheckoutFlow from "../../components/checkout/checkout-flow"
+import { CartProvider } from "../../context/cart-context"
+import { CheckoutProvider } from "../../context/checkout-context"
 
 export default function CheckoutPage() {
   return (

@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowLeft, Shield, Lock } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { Button } from "../../components/ui/button"
 import { Progress } from "../../components/ui/progress"
 import { useCart } from "../../context/cart-context"
-import OrderSummary from "../checkout/order-summary"
-import ShippingForm from "../checkout/shipping-form"
-import PaymentForm from "../checkout/payment"
-import OrderConfirmation from "../checkout/order-confirmation"
+import { useCheckout } from "../../context/checkout-context"
+import OrderSummary from "./order-summary"
+import DirectCheckoutSummary from "./direct-checkout-summary"
+import ShippingForm from "./shipping-form"
+import PaymentForm from "./payment"
+import OrderConfirmation from "./order-confirmation"
 import type { CheckoutStep, ShippingInfo, PaymentInfo } from "../../types/checkout"
+import type { CartItem } from "../../types/cart"
 
 const steps: CheckoutStep[] = [
   { id: 1, title: "Shipping", description: "Enter your delivery address" },
@@ -23,15 +26,25 @@ export default function CheckoutFlow() {
   const [paymentInfo, setPaymentInfo] = useState<PaymentInfo | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [orderComplete, setOrderComplete] = useState(false)
-  const { state } = useCart()
-  const navigate = useNavigate()
 
-  // Redirect if cart is empty
+  const { state } = useCart()
+  const { directCheckoutItem, isDirectCheckout } = useCheckout()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const searchParams = new URLSearchParams(location.search)
+  const isDirect = searchParams.get("direct") === "true"
+
+  // Get items for checkout (either cart items or direct checkout item)
+  const checkoutItems = (isDirectCheckout && isDirect)
+    ? [directCheckoutItem].filter((item): item is CartItem => item !== null)
+    : state.items
+
+  // Redirect if no items to checkout
   useEffect(() => {
-    if (state.items.length === 0 && !orderComplete) {
+    if (checkoutItems.length === 0 && !orderComplete) {
       navigate("/")
     }
-  }, [state.items.length, orderComplete, navigate])
+  }, [checkoutItems.length, orderComplete, navigate])
 
   const handleStepComplete = (step: number, data: any) => {
     switch (step) {
@@ -71,20 +84,31 @@ export default function CheckoutFlow() {
 
   const progress = ((currentStep - 1) / (steps.length - 1)) * 100
 
-  if (state.items.length === 0 && !orderComplete) {
+  if (checkoutItems.length === 0 && !orderComplete) {
     return null
   }
 
   return (
     <div className="min-h-screen">
+
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {/* Back Button */}
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="mb-8">
           <Button variant="ghost" onClick={() => navigate(-1)} className="text-slate-600 hover:text-rose-400">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Shopping
+            {isDirect ? "Back to Product" : "Back to Shopping"}
           </Button>
         </motion.div>
+
+        {/* Direct Checkout Badge */}
+        {isDirect && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 text-center">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-rose-100 to-lavender-100 px-4 py-2 rounded-full">
+              <div className="w-2 h-2 bg-rose-400 rounded-full animate-pulse" />
+              <span className="text-sm font-medium text-slate-700">Express Checkout</span>
+            </div>
+          </motion.div>
+        )}
 
         {/* Progress Bar */}
         {currentStep < 4 && (
@@ -216,16 +240,14 @@ export default function CheckoutFlow() {
                 </motion.div>
               )}
               {currentStep === 4 && (
-                <OrderConfirmation key="confirmation" shippingInfo={shippingInfo} orderItems={state.items} />
+                <OrderConfirmation key="confirmation" shippingInfo={shippingInfo} orderItems={checkoutItems} />
               )}
             </AnimatePresence>
           </div>
 
           {/* Order Summary Sidebar */}
           {currentStep < 4 && (
-            <div className="lg:col-span-1">
-              <OrderSummary />
-            </div>
+            <div className="lg:col-span-1">{isDirect ? <DirectCheckoutSummary /> : <OrderSummary />}</div>
           )}
         </div>
       </div>
