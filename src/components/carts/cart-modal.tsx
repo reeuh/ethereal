@@ -83,14 +83,6 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                   </motion.span>
                 )}
               </DialogTitle>
-              <motion.button
-                onClick={onClose}
-                className="p-2 hover:bg-slate-50 rounded-full transition-colors"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <X className="h-4 w-4 text-slate-500" />
-              </motion.button>
             </div>
           </DialogHeader>
 
