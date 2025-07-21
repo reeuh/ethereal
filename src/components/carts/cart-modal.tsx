@@ -1,11 +1,14 @@
+'use client'
+
 import { motion } from "framer-motion"
-import { ShoppingBag } from "lucide-react"
+import { X, ShoppingBag } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog"
 import { Separator } from "../../components/ui/separator"
 import { ScrollArea } from "../../components/ui/scroll-area"
-import CartItem from "../carts/cart-item"
+import CartItem from "./cart-item"
 import { useCart } from "../../context/cart-context"
 import AnimatedButton from "../../components/buttons/animated-button"
+import { useNavigate } from "react-router-dom"
 
 interface CartModalProps {
   isOpen: boolean
@@ -15,6 +18,8 @@ interface CartModalProps {
 export default function CartModal({ isOpen, onClose }: CartModalProps) {
   const { state } = useCart()
   const { items } = state
+  const navigate = useNavigate()
+
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
   const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
@@ -25,7 +30,11 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
       opacity: 1,
       scale: 1,
       y: 0,
-
+      transition: {
+        type: "spring" as const,
+        stiffness: 300,
+        damping: 30,
+      },
     },
     exit: {
       opacity: 0,
@@ -49,7 +58,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md w-full max-h-[90vh] p-0 gap-0 bg-white border-0 shadow-2xl justify-center">
+      <DialogContent className="sm:max-w-md w-full max-h-[90vh] p-0 gap-0 bg-white border-0 shadow-2xl overflow-y-auto">
         <motion.div
           variants={modalVariants}
           initial="hidden"
@@ -74,6 +83,14 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                   </motion.span>
                 )}
               </DialogTitle>
+              <motion.button
+                onClick={onClose}
+                className="p-2 hover:bg-slate-50 rounded-full transition-colors"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <X className="h-4 w-4 text-slate-500" />
+              </motion.button>
             </div>
           </DialogHeader>
 
@@ -101,7 +118,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
             ) : (
               <>
                 {/* Cart Items */}
-                <ScrollArea className="flex-1 px-4 sm:px-6">
+                <ScrollArea className="flex-1 px-6">
                   <motion.div className="py-4 space-y-4" variants={itemsVariants} initial="hidden" animate="visible">
                     {items.map((item, index) => (
                       <CartItem key={item.id} item={item} index={index} />
@@ -110,7 +127,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                 </ScrollArea>
 
                 {/* Footer */}
-                <div className="border-t border-slate-100 p-4 sm:p-6 space-y-4">
+                <div className="border-t border-slate-100 p-6 space-y-4">
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm text-slate-600">
                       <span>Subtotal ({totalItems} items)</span>
@@ -133,7 +150,13 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                   </div>
 
                   <div className="space-y-3">
-                    <AnimatedButton className="w-full bg-rose-300 hover:bg-rose-400 text-white py-3 rounded-full text-base font-medium">
+                    <AnimatedButton
+                      onClick={() => {
+                        navigate("/checkout")
+                        onClose()
+                      }}
+                      className="w-full bg-rose-300 hover:bg-rose-400 text-white py-3 rounded-full text-base font-medium"
+                    >
                       Proceed to Checkout
                     </AnimatedButton>
                     <AnimatedButton
