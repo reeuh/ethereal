@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from "framer-motion"
-import { X, ShoppingBag } from "lucide-react"
+import { ShoppingBag } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog"
 import { Separator } from "../../components/ui/separator"
 import { ScrollArea } from "../../components/ui/scroll-area"
