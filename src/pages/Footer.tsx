@@ -35,7 +35,7 @@ export default function Footer() {
         >
           <motion.div className="space-y-4" variants={staggerItem}>
             <Logo />
-            <p className="text-sm text-slate-600 font-light">Timeless elegance for the modern woman.</p>
+            <p className="text-sm text-slate-600 font-light">Lorem ipsum dolor sit amet</p>
           </motion.div>
 
           {footerSections.map((section) => (
